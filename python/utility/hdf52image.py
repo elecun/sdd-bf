@@ -7,16 +7,17 @@ import io
 import glob
 from PIL import Image
 import numpy as np
+from pathlib import Path
 
 group_name = "cam1_images"
 
-data = []
-group = []
+data_path = []
+group_path = []
 def extract(name, obj):
     if isinstance(obj, h5py.Dataset):
-        data.append(name)
+        data_path.append(name)
     elif isinstance(obj, h5py.Group):
-        group.append(name)
+        group_path.append(name)
 
 if __name__ == "__main__":
     #arguments
@@ -28,13 +29,19 @@ if __name__ == "__main__":
     _out_path = args.outpath
     _in_hdf5 = args.infile
 
+    _base_dir = os.path.dirname(os.path.abspath(__file__)) 
+
     with h5py.File(_in_hdf5, "r") as hf:
         hf.visititems(extract)
 
-        for image_data in data:
-            arr = np.array(hf[image_data])
-            img = Image.open(io.BytesIO(arr))
-            print("image size : ", img.size)
+        for path in data_path:
+            #print(Path(_base_dir).Path(path))
+            
+            os.mkdir("./"+path)
+            img_data = Image.open(io.BytesIO(np.array(hf[path])))
+            print("image size : ", img_data.size)
+            #image_file = Image.open(path)
+            img_data.save("./"+path, "png")
 
         # group_key = list(hf.keys())[0]
         # print("Root group : ", group_key)

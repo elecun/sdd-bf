@@ -35,9 +35,10 @@ if __name__ == "__main__":
         hf.visititems(extract)
 
         for path in data_path:
-            #print(Path(_base_dir).Path(path))
+            abs_path = Path(_base_dir)/Path(path)
+            dir= os.path.dirname(path)
             
-            os.mkdir("./"+path)
+            os.mkdir(dir)
             img_data = Image.open(io.BytesIO(np.array(hf[path])))
             print("image size : ", img_data.size)
             #image_file = Image.open(path)

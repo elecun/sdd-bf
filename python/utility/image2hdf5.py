@@ -9,19 +9,19 @@ import numpy as np
 
 group_name = "dataset"
 
-if __name__ == "__main__":
-    #arguments
-    parser = argparse.ArgumentParser(description="image2hdf5 --out output_hdf5 --in image_path")
-    parser.add_argument('--outfile', nargs='?', required=True, help="Output HDF5 file")
-    parser.add_argument('--inpath', nargs='?', required=True, help="Input images (path)")
-    args = parser.parse_args()
+class TransformExeption(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 
-    _out_hdf5 = args.outfile
-    _in_path = args.inpath + "*.png"
+    def __str__(self):
+        return self.msg
 
-    try :
+# png file to hdf5
+def image2hdfs(inpath, outfile):
+    try:
         if _out_hdf5 is None or _in_path is None:
-            print("It must be required the output file name.")
+            raise TransformExeption("It must be required the output file name.")
+            
 
         with h5py.File(_out_hdf5, 'a') as hf:
             group = hf.create_group(group_name)
@@ -38,9 +38,21 @@ if __name__ == "__main__":
                         print(dset.name, dset.shape, dset.dtype)
 
         hf.close()
-
+    except TransformExeption as e:
+        print("Error : ",e)
         
-    except ValueError as e:
-        print("Error :", e)
+    
+
+if __name__ == "__main__":
+    #arguments
+    parser = argparse.ArgumentParser(description="image2hdf5 --out output_hdf5 --in image_path")
+    parser.add_argument('--outfile', nargs='?', required=True, help="Output HDF5 file")
+    parser.add_argument('--inpath', nargs='?', required=True, help="Input images (path)")
+    args = parser.parse_args()
+
+    _out_hdf5 = args.outfile
+    _in_path = args.inpath + "*.png"
+    
+    image2hdfs(_in_path, _out_hdf5)
 
     

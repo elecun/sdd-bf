@@ -2,3 +2,4 @@ pySide6==6.5.1
 h5py
 pillow
 numpy
+opencv-python
